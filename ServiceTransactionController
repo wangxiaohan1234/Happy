@@ -1,0 +1,340 @@
+package com.transaction;
+
+import com.alibaba.fastjson.JSONObject;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Properties;
+
+@RestController
+@RequestMapping(value = "/web/transmit")
+public class ServiceTransactionController{
+        public Properties config = PropertiesLoaderUtils.loadProperties(new ClassPathResource("application.properties"));
+
+        public ServiceTransactionController() throws IOException {
+        }
+
+        @GetMapping("/rzsgaj_czrkxx")
+        public JSONObject hello(HttpServletRequest request) {
+        JSONObject result = new JSONObject();
+        String GMSFHM = request.getParameter("GMSFHM");
+        String XM = request.getParameter("XM");
+        String HH = request.getParameter("HH");
+        BufferedReader reader = null;
+        String resultStr = "";
+        StringBuffer sbf = new StringBuffer();
+        String httpUrl = config.getProperty("transmit.gonganju.apiurl");
+        String apiKey = config.getProperty("transmit.gonganju.apikey");
+        try {
+                if(StringUtils.isEmpty(GMSFHM)){
+                        GMSFHM="";
+                }
+                httpUrl+="?GMSFHM="+GMSFHM;
+
+                if(!StringUtils.isEmpty(XM)){
+                        XM = URLDecoder.decode(XM,"utf-8");
+                        httpUrl+="&XM="+ URLEncoder.encode(XM, "UTF-8");
+                }
+                if(!StringUtils.isEmpty(HH)){
+                        HH = URLDecoder.decode(HH,"utf-8");
+                        httpUrl+="&HH="+HH;
+                }
+                System.out.println("httpUrl:"+httpUrl);
+                URL url = new URL(httpUrl);
+                HttpURLConnection connection = (HttpURLConnection) url
+                        .openConnection();
+                // 填入api的请求方法
+                connection.setRequestMethod("GET");
+                // 填入appkey到HTTP header
+                connection.setRequestProperty("ApiKey", apiKey);
+                connection.connect();
+                connection.setConnectTimeout(10000);
+                InputStream is = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                String strRead = null;
+                while ((strRead = reader.readLine()) != null) {
+                        sbf.append(strRead);
+                        sbf.append("\r\n");
+                }
+                reader.close();
+                resultStr = sbf.toString();
+                result.put("code","200");
+                result.put("error","");
+                result.put("data",resultStr);
+                System.out.println("result:"+resultStr);
+                //System.out.println("result:"+result);
+        } catch (Exception e) {
+                //e.printStackTrace();
+                result.put("code","300");
+                result.put("error",e.getMessage());
+        }
+                 return result;
+        }
+
+        /**
+         * 日照市公安局_机动车信息
+         * @param request
+         * @return
+         */
+        @GetMapping("/rzsgaj_jdcxx")
+        public JSONObject jdcxx(HttpServletRequest request) {
+                JSONObject result = new JSONObject();
+                String SFZMHM = request.getParameter("SFZMHM");
+                String XM = request.getParameter("XM");
+                BufferedReader reader = null;
+                String resultStr = "";
+                StringBuffer sbf = new StringBuffer();
+                String httpUrl = config.getProperty("transmit.gonganju.jidongche.apiurl");
+                String apiKey = config.getProperty("transmit.gonganju.jidongche.apikey");
+                try {
+                        httpUrl+="?SFZMHM="+SFZMHM;
+
+                        if(!StringUtils.isEmpty(XM)){
+                                XM = URLDecoder.decode(XM,"utf-8");
+                                httpUrl+="&XM="+URLEncoder.encode(XM, "UTF-8");
+                        }
+                        System.out.println("httpUrl:"+httpUrl);
+                        URL url = new URL(httpUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                .openConnection();
+                        // 填入api的请求方法
+                        connection.setRequestMethod("GET");
+                        // 填入appkey到HTTP header
+                        connection.setRequestProperty("ApiKey", apiKey);
+                        connection.connect();
+                        connection.setConnectTimeout(10000);
+                        InputStream is = connection.getInputStream();
+                        reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        String strRead = null;
+                        while ((strRead = reader.readLine()) != null) {
+                                sbf.append(strRead);
+                                sbf.append("\r\n");
+                        }
+                        reader.close();
+                        resultStr = sbf.toString();
+                        result.put("code","200");
+                        result.put("error","");
+                        result.put("data",resultStr);
+                        System.out.println("result:"+resultStr);
+                        //System.out.println("result:"+result);
+                } catch (Exception e) {
+                        //e.printStackTrace();
+                        result.put("code","300");
+                        result.put("error",e.getMessage());
+                }
+                return result;
+        }
+        /**
+         * 日照市不动产登记中心_不动产登记信息
+         * @param request
+         * @return
+         */
+        @GetMapping("/rzsgtj_ndcdjxx")
+        public JSONObject ndcdjxx(HttpServletRequest request) {
+                JSONObject result = new JSONObject();
+                String zjh = request.getParameter("zjh");
+                String qlr = request.getParameter("qlr");
+                BufferedReader reader = null;
+                String resultStr = "";
+                StringBuffer sbf = new StringBuffer();
+                String httpUrl = config.getProperty("transmit.budongchan.apiurl");
+                String apiKey = config.getProperty("transmit.budongchan.apikey");
+                try {
+                        httpUrl+="?zjh="+zjh;
+
+                        if(!StringUtils.isEmpty(qlr)){
+                                qlr = URLDecoder.decode(qlr,"utf-8");
+                                httpUrl+="&qlr="+URLEncoder.encode(qlr, "UTF-8");
+                        }
+                        System.out.println("httpUrl:"+httpUrl);
+                        URL url = new URL(httpUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                .openConnection();
+                        // 填入api的请求方法
+                        connection.setRequestMethod("GET");
+                        // 填入appkey到HTTP header
+                        connection.setRequestProperty("ApiKey", apiKey);
+                        connection.connect();
+                        connection.setConnectTimeout(10000);
+                        InputStream is = connection.getInputStream();
+                        reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        String strRead = null;
+                        while ((strRead = reader.readLine()) != null) {
+                                sbf.append(strRead);
+                                sbf.append("\r\n");
+                        }
+                        reader.close();
+                        resultStr = sbf.toString();
+                        result.put("code","200");
+                        result.put("error","");
+                        result.put("data",resultStr);
+                        System.out.println("result:"+resultStr);
+                        //System.out.println("result:"+result);
+                } catch (Exception e) {
+                        //e.printStackTrace();
+                        result.put("code","300");
+                        result.put("error",e.getMessage());
+                }
+                return result;
+        }
+        /**
+         * 省工商局_个体登记信息
+         * @param request
+         * @return
+         */
+        @GetMapping("/gsjgtdjxxcxjk")
+        public JSONObject gsjgtdjxxcxjk(HttpServletRequest request) {
+                JSONObject result = new JSONObject();
+                String q = request.getParameter("q");
+                BufferedReader reader = null;
+                String resultStr = "";
+                StringBuffer sbf = new StringBuffer();
+                String httpUrl = config.getProperty("transmit.gongshangju.geti.apiurl");
+                String apiKey = config.getProperty("transmit.gongshangju.geti.apikey");
+                try {
+                        q=URLDecoder.decode(q,"utf-8");
+                        httpUrl+="?q="+URLEncoder.encode(q, "UTF-8");
+                        System.out.println("httpUrl:"+httpUrl);
+                        URL url = new URL(httpUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                .openConnection();
+                        // 填入api的请求方法
+                        connection.setRequestMethod("GET");
+                        // 填入appkey到HTTP header
+                        connection.setRequestProperty("ApiKey", apiKey);
+                        connection.connect();
+                        connection.setConnectTimeout(10000);
+                        InputStream is = connection.getInputStream();
+                        reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        String strRead = null;
+                        while ((strRead = reader.readLine()) != null) {
+                                sbf.append(strRead);
+                                sbf.append("\r\n");
+                        }
+                        reader.close();
+                        resultStr = sbf.toString();
+                        result.put("code","200");
+                        result.put("error","");
+                        result.put("data",resultStr);
+                        System.out.println("result:"+resultStr);
+                        //System.out.println("result:"+result);
+                } catch (Exception e) {
+                        //e.printStackTrace();
+                        result.put("code","300");
+                        result.put("error",e.getMessage());
+                }
+                return result;
+        }
+        /**
+         * 省工商局_企业注册登记信息
+         * @param request
+         * @return
+         */
+        @GetMapping("/fddbrszqyxxcx")
+        public JSONObject fddbrszqyxxcx(HttpServletRequest request) {
+                JSONObject result = new JSONObject();
+                String cerno = request.getParameter("cerno");
+                BufferedReader reader = null;
+                String resultStr = "";
+                StringBuffer sbf = new StringBuffer();
+                String httpUrl = config.getProperty("transmit.gongshangju.apiurl");
+                String apiKey = config.getProperty("transmit.gongshangju.apikey");
+                try {
+                        httpUrl+="?cerno="+cerno;
+                        System.out.println("httpUrl:"+httpUrl);
+                        URL url = new URL(httpUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                .openConnection();
+                        // 填入api的请求方法
+                        connection.setRequestMethod("GET");
+                        // 填入appkey到HTTP header
+                        connection.setRequestProperty("ApiKey", apiKey);
+                        connection.connect();
+                        connection.setConnectTimeout(10000);
+                        InputStream is = connection.getInputStream();
+                        reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        String strRead = null;
+                        while ((strRead = reader.readLine()) != null) {
+                                sbf.append(strRead);
+                                sbf.append("\r\n");
+                        }
+                        reader.close();
+                        resultStr = sbf.toString();
+                        result.put("code","200");
+                        result.put("error","");
+                        result.put("data",resultStr);
+                        System.out.println("result:"+resultStr);
+                        //System.out.println("result:"+result);
+                } catch (Exception e) {
+                        //e.printStackTrace();
+                        result.put("code","300");
+                        result.put("error",e.getMessage());
+                }
+                return result;
+        }
+        /**
+         * 省民政厅_低保人员信息
+         * @param request
+         * @return
+         */
+        @GetMapping("/smzt_dbryxx_dbjk")
+        public JSONObject dbjk(HttpServletRequest request) {
+                JSONObject result = new JSONObject();
+                String name = request.getParameter("name");
+                String id_card = request.getParameter("id_card");
+                BufferedReader reader = null;
+                String resultStr = "";
+                StringBuffer sbf = new StringBuffer();
+                String httpUrl = config.getProperty("transmit.minzhengting.apiurl");
+                String apiKey = config.getProperty("transmit.minzhengting.apikey");
+                try {
+                        httpUrl+="?id_card="+id_card;
+                        if(!StringUtils.isEmpty(name)){
+                                name = URLDecoder.decode(name,"utf-8");
+                                httpUrl+="&name="+URLEncoder.encode(name, "UTF-8");
+                        }
+                        httpUrl+="&start=10&limit=10";
+                        System.out.println("httpUrl:"+httpUrl);
+                        URL url = new URL(httpUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                .openConnection();
+                        // 填入api的请求方法
+                        connection.setRequestMethod("GET");
+                        // 填入appkey到HTTP header
+                        connection.setRequestProperty("ApiKey", apiKey);
+                        connection.connect();
+                        connection.setConnectTimeout(10000);
+                        InputStream is = connection.getInputStream();
+                        reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        String strRead = null;
+                        while ((strRead = reader.readLine()) != null) {
+                                sbf.append(strRead);
+                                sbf.append("\r\n");
+                        }
+                        reader.close();
+                        resultStr = sbf.toString();
+                        result.put("code","200");
+                        result.put("error","");
+                        result.put("data",resultStr);
+                        System.out.println("result:"+resultStr);
+                        //System.out.println("result:"+result);
+                } catch (Exception e) {
+                        //e.printStackTrace();
+                        result.put("code","300");
+                        result.put("error",e.getMessage());
+                }
+                return result;
+        }
+}
